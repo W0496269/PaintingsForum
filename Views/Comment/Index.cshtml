@@ -1,0 +1,32 @@
+﻿@model IEnumerable<DiscussionForm.Models.Discussion>
+
+<h1>Paintings</h1>
+
+<a href="@Url.Action("Create", "Discussion")" class="btn btn-primary mb-3">Create New Post</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Created At</th>
+            <th>Image</th>
+            <th>Comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var discussion in Model)
+        {
+            <tr>
+                <td>@discussion.Title</td>
+                <td>@discussion.CreateDate.ToString("g")</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(discussion.ImageFilename))
+                    {
+                        <img src="~/images/@discussion.ImageFilename" width="100" />
+                    }
+                </td>
+                <td>@discussion.Comments.Count</td>
+            </tr>
+        }
+    </tbody>
+</table>

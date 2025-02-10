@@ -1,0 +1,29 @@
+﻿@model List<DiscussionForm.Models.Discussion>
+
+@{
+    ViewData["Title"] = "All Paints";
+}
+
+<h1 class="mb-4">All Posts</h1>
+<a href="@Url.Action("Create", "Discussion")" class="btn btn-success mb-3">Start a New Post</a>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">No posts found.</div>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var discussion in Model)
+        {
+            <a href="@Url.Action("GetDiscussion", "Home", new { id = discussion.DiscussionId })" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">@discussion.Title</h5>
+                    <small>@discussion.CreateDate.ToShortDateString()</small>
+                </div>
+                <p class="mb-1">@discussion.Content.Substring(0, Math.Min(discussion.Content.Length, 100))...</p>
+                
+            </a>
+        }
+    </div>
+}

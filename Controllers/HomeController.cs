@@ -1,32 +1,48 @@
-using System.Diagnostics;
-using DiscussionForm.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using DiscussionForm.Models;
+using DiscussionForm.Data;
 
 namespace DiscussionForm.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
+        // Display the list of discussions
         public IActionResult Index()
         {
-            return View();
+            var discussions = _context.Discussions
+                .Include(d => d.Comments)
+                .OrderByDescending(d => d.CreateDate)
+                .ToList();
+
+            return View(discussions);
         }
 
-        public IActionResult Privacy()
+        // Get a specific discussion by ID and show it along with comments
+        public IActionResult GetDiscussion(int id)
         {
-            return View();
-        }
+            var discussion = _context.Discussions
+                .Include(d => d.Comments)
+                .Where(d => d.DiscussionId == id)
+                .FirstOrDefault();
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (discussion == null)
+            {
+                return NotFound();
+            }
+
+            // Order comments by CreateDate in descending order
+            discussion.Comments = discussion.Comments.OrderByDescending(c => c.CreateDate).ToList();
+
+            return View(discussion);
         }
     }
 }
