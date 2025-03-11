@@ -4,34 +4,30 @@
     ViewData["Title"] = Model.Title;
 }
 
-<div class="card p-4">
-    <h2 class="text-center">@Model.Title</h2>
-    <p class="text-muted text-center">Posted on: @Model.CreateDate.ToShortDateString()</p>
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <p>@Model.Content</p>
 
-    @if (!string.IsNullOrEmpty(Model.ImageFilename))
-    {
-        <div class="text-center my-3">
-            <img src="~/images/@Model.ImageFilename" class="img-fluid" alt="Discussion Image" style="max-width: 300px;">
-        </div>
-    }
+        @if (!string.IsNullOrEmpty(Model.ImageFilename))
+        {
+            <img src="~/images/@Model.ImageFilename" alt="Image" class="img-fluid">
+        }
 
-    <p class="lead">@Model.Content</p>
+        <hr>
+        <h5>Comments</h5>
+        <form method="post" action="@Url.Action("Create", "Comment")">
+            <textarea name="content" class="form-control" rows="3" required></textarea>
+            <input type="hidden" name="discussionId" value="@Model.DiscussionId" />
+            <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+        </form>
 
-    <a href="@Url.Action("Create", "Comment", new { discussionId = Model.DiscussionId })" class="btn btn-primary mb-3">Add Comment</a>
-
-    <h3 class="mt-4">Comments</h3>
-    @if (Model.Comments.Count == 0)
-    {
-        <p class="text-muted">No comments yet.</p>
-    }
-    else
-    {
-        @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreateDate))
+        @foreach (var comment in Model.Comments)
         {
             <div class="border p-3 mb-2 rounded">
                 <p>@comment.Content</p>
-                <small class="text-muted">Posted on: @comment.CreateDate</small>
+                <small class="text-muted">Posted by @comment.User.Name on @comment.CreateDate</small>
             </div>
         }
-    }
+    </div>
 </div>

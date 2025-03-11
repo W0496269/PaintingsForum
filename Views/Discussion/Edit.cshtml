@@ -1,8 +1,8 @@
 ﻿@model DiscussionForm.Models.Discussion
 
-<h1 class="text-center my-4">>Create a New Post</h1>
+<h1>Edit Posts</h1>
 
-<form asp-action="Create" method="post" enctype="multipart/form-data">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Title"></label>
         <input asp-for="Title" class="form-control" />
@@ -15,5 +15,5 @@
         <label for="Image">Upload Image</label>
         <input type="file" name="Image" class="form-control" />
     </div>
-    <button type="submit" class="btn btn-primary mt-3">Create Post</button>
+    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
 </form>

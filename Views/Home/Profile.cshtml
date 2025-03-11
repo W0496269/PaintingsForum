@@ -1,0 +1,24 @@
+﻿@model ApplicationUser
+
+<h2>@Model.UserName's Profile</h2>
+<p>Name: @Model.Name</p>
+<p>Location: @Model.Location</p>
+
+<h3>My Discussions</h3>
+@if (Model.Discussions.Count > 0)
+{
+    <ul>
+        @foreach (var discussion in Model.Discussions)
+        {
+            <li>
+                <a href="@Url.Action("GetDiscussion", "Home", new { id = discussion.DiscussionId })">
+                    @discussion.Title
+                </a>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No discussions yet.</p>
+}

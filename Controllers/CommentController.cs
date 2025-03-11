@@ -1,58 +1,39 @@
-﻿using DiscussionForm.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using DiscussionForm.Models;
-using Microsoft.AspNetCore.Mvc;
-using System;
+using DiscussionForm.Data;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace DiscussionForm.Controllers
 {
     public class CommentController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CommentController(ApplicationDbContext context)
+        public CommentController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        // GET: Comment/Create (For adding a new comment)
-        public IActionResult Create(int discussionId)
-        {
-            // Pass the DiscussionId to the view
-            ViewData["DiscussionId"] = discussionId;
-            return View();
-        }
-
-        // POST: Comment/Create (Submitting the new comment)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string content, int discussionId)
+        public async Task<IActionResult> Create(int discussionId, string content)
         {
-            if (ModelState.IsValid)
+            var user = await _userManager.GetUserAsync(User);
+            var comment = new Comment
             {
-                var discussion = await _context.Discussions.FindAsync(discussionId);
+                Content = content,
+                CreateDate = DateTime.Now,
+                DiscussionId = discussionId,
+                ApplicationUserId = user.Id
+            };
 
-                if (discussion != null)
-                {
-                    var comment = new Comment
-                    {
-                        Content = content,
-                        DiscussionId = discussionId,
-                        CreateDate = DateTime.Now
-                    };
+            _context.Add(comment);
+            await _context.SaveChangesAsync();
 
-                    _context.Comments.Add(comment);
-                    await _context.SaveChangesAsync();
-
-                    // Redirect back to the GetDiscussion page with the updated comments
-                    return RedirectToAction("GetDiscussion", "Home", new { id = discussionId });
-                }
-
-                return NotFound();
-            }
-
-            // If something fails, redirect back to the GetDiscussion page
-            return RedirectToAction("GetDiscussion", "Home", new { id = discussionId });
+            return RedirectToAction(nameof(HomeController.GetDiscussion), "Home", new { id = discussionId });
         }
     }
 }

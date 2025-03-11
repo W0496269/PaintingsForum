@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using DiscussionForm.Models;
+using System.Linq;
+using System.Threading.Tasks;
 using DiscussionForm.Data;
 
 namespace DiscussionForm.Controllers
@@ -15,32 +16,27 @@ namespace DiscussionForm.Controllers
             _context = context;
         }
 
-        // Display the list of discussions
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var discussions = _context.Discussions
-                .Include(d => d.Comments)
+            var discussions = await _context.Discussions
+                .Include(d => d.User)
                 .OrderByDescending(d => d.CreateDate)
-                .ToList();
-
+                .ToListAsync();
             return View(discussions);
         }
 
-        // Get a specific discussion by ID and show it along with comments
-        public IActionResult GetDiscussion(int id)
+        public async Task<IActionResult> GetDiscussion(int id)
         {
-            var discussion = _context.Discussions
+            var discussion = await _context.Discussions
                 .Include(d => d.Comments)
-                .Where(d => d.DiscussionId == id)
-                .FirstOrDefault();
+                    .ThenInclude(c => c.User)
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d => d.DiscussionId == id);
 
             if (discussion == null)
             {
                 return NotFound();
             }
-
-            // Order comments by CreateDate in descending order
-            discussion.Comments = discussion.Comments.OrderByDescending(c => c.CreateDate).ToList();
 
             return View(discussion);
         }

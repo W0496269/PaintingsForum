@@ -14,26 +14,16 @@ else
 {
     @foreach (var discussion in Model)
     {
-        <div class="card mb-4">
-            <div class="row g-0">
-                @if (!string.IsNullOrEmpty(discussion.ImageFilename))
-                {
-                    <div class="col-md-3 d-flex align-items-center">
-                        <img src="~/images/@discussion.ImageFilename" class="img-fluid card-img" alt="Discussion Image">
-                    </div>
-                }
-                <div class="col-md-9">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="@Url.Action("GetDiscussion", "Home", new { id = discussion.DiscussionId })" class="text-dark text-decoration-none">
-                                @discussion.Title
-                            </a>
-                        </h5>
-                        <p class="card-text">@discussion.Content.Substring(0, Math.Min(discussion.Content.Length, 100))...</p>
-                        <p class="text-muted small">Created on @discussion.CreateDate | Comments: @discussion.Comments.Count</p>
-                    </div>
-                </div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="@Url.Action("GetDiscussion", "Home", new { id = discussion.DiscussionId })">
+                        @discussion.Title
+                    </a>
+                </h5>
+                <p class="card-text">@discussion.Content.Substring(0, 100)...</p>
+                <p class="card-text"><small class="text-muted">Posted by @discussion.User.Name on @discussion.CreateDate.ToShortDateString()</small></p>
             </div>
-        </div>
+            </div>
     }
 }

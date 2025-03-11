@@ -1,25 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 
 namespace DiscussionForm.Models
 {
     public class Discussion
     {
-        [Key]
         public int DiscussionId { get; set; }
 
         [Required]
-        public string Title { get; set; } = string.Empty;
+        public string Title { get; set; }
 
         [Required]
-        public string Content { get; set; } = string.Empty;
+        public string Content { get; set; }
 
-        public string? ImageFilename { get; set; }
+        public string ImageFilename { get; set; }
 
-        public DateTime CreateDate { get; set; } = DateTime.Now;
+        public DateTime CreateDate { get; set; }
 
-        // Navigation Property
-        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser User { get; set; }
+
+        public ICollection<Comment> Comments { get; set; }
+
+        [NotMapped]
+        public IFormFile ImageFile { get; set; }
     }
 }
